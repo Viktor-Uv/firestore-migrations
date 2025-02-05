@@ -42,6 +42,7 @@ export async function updateSubscribersAndSubscriptions() {
     );
     if (subscribersChanged) {
       updatedData["subscribers.list"] = newSubscribers;
+      updatedData["subscribers.count"] = newSubscribers.length;
       changed = true;
     }
 
@@ -53,6 +54,7 @@ export async function updateSubscribersAndSubscriptions() {
     );
     if (subscriptionsChanged) {
       updatedData["subscriptions.list"] = newSubscriptions;
+      updatedData["subscriptions.count"] = newSubscriptions.length;
       changed = true;
     }
 
