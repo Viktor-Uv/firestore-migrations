@@ -3,8 +3,9 @@ import { db } from "../shared/database";
 
 // If you're running against the emulator, ensure that the FIRESTORE_EMULATOR_HOST env var is set.
 
+const usersRef = db.collection('users');
+
 export async function updateUserIds() {
-  const usersRef = db.collection('users');
   const snapshot = await usersRef.get();
   console.log(`Found ${snapshot.size} user documents.`);
 
