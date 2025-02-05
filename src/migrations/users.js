@@ -1,5 +1,5 @@
-import { askConfirmation } from "../shared/console";
-import { db } from "../shared/database";
+import { askConfirmation } from "../shared/console.js";
+import { db } from "../shared/database.js";
 
 // If you're running against the emulator, ensure that the FIRESTORE_EMULATOR_HOST env var is set.
 
