@@ -1,5 +1,5 @@
-import readline from 'readline';
 import admin from 'firebase-admin';
+import { askConfirmation } from "./consoleInteractions";
 
 admin.initializeApp();
 const db = admin.firestore();
@@ -42,17 +42,3 @@ export async function updateUserIds() {
 updateUserIds().catch(err => {
   console.error('Migration failed:', err);
 });
-
-// Function to ask for confirmation.
-function askConfirmation(question) {
-  return new Promise((resolve) => {
-    const rl = readline.createInterface({
-      input: process.stdin,
-      output: process.stdout
-    });
-    rl.question(question, (answer) => {
-      rl.close();
-      resolve(answer.trim().toLowerCase());
-    });
-  });
-}
