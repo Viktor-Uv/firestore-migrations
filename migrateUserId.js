@@ -1,8 +1,5 @@
-import admin from 'firebase-admin';
 import { askConfirmation } from "./consoleInteractions";
-
-admin.initializeApp();
-const db = admin.firestore();
+import { db } from "./database";
 
 // If you're running against the emulator, ensure that the FIRESTORE_EMULATOR_HOST env var is set.
 
