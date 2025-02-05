@@ -1,4 +1,3 @@
-// Function to ask for confirmation.
 import readline from "readline";
 
 export function askConfirmation(question) {
