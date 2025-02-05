@@ -1,3 +1,3 @@
-import { updateUserIds } from './src/migrations/users.js'
+import { updateUsers } from './src/migrations/users.js';
 
-await updateUserIds();
+await updateUsers();

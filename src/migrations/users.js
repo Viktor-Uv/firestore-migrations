@@ -37,6 +37,10 @@ export async function updateUserIds() {
   }
 }
 
-updateUserIds().catch(err => {
-  console.error('Migration failed:', err);
-});
+export async function updateUsers() {
+  try {
+    await updateUserIds()
+  } catch (error) {
+    console.error('Migration failed:', error);
+  }
+}
