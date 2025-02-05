@@ -37,6 +37,7 @@ export async function updateClubsAdminsAndMembers() {
     const { changed: adminsChanged, newList: newAdmins } = updateAdminsForClub(data, validUserDocIds, userIdToDocId);
     if (adminsChanged) {
       updatedData["admins.list"] = newAdmins;
+      updatedData["admins.count"] = newAdmins.length;
       changed = true;
     }
 
@@ -44,6 +45,7 @@ export async function updateClubsAdminsAndMembers() {
     const { changed: membersChanged, newList: newMembers } = updateMembersForClub(data, validUserDocIds, userIdToDocId);
     if (membersChanged) {
       updatedData["members.list"] = newMembers;
+      updatedData["members.count"] = newMembers.length;
       changed = true;
     }
 
