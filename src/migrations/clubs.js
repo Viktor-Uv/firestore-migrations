@@ -11,6 +11,7 @@ const host = process.env.FIRESTORE_EMULATOR_HOST || '!PRODUCTION!';
 export async function updateClubsAdminsAndMembers() {
   // First, build the mapping from users.
   const usersSnapshot = await usersRef.get();
+  console.log(`Found ${usersSnapshot.size} user documents for clubs migration.`);
   const validUserDocIds = new Map();
   const userIdToDocId = new Map();
   usersSnapshot.forEach(doc => {
@@ -23,7 +24,7 @@ export async function updateClubsAdminsAndMembers() {
 
   // Now process the clubs collection.
   const clubsSnapshot = await clubsRef.get();
-  console.log(`Found ${clubsSnapshot.size} clubs documents for clubs migration.`);
+  console.log(`Found ${clubsSnapshot.size} club documents for clubs migration.`);
 
   const batch = db.batch();
   let updateCount = 0;
