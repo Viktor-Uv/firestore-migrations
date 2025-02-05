@@ -1,3 +1,4 @@
-import { updateUsers } from './src/migrations/users.js';
+import { updateUsers, updateSubscribersAndSubscriptions } from './src/migrations/users.js';
 
+await updateSubscribersAndSubscriptions();
 await updateUsers();
