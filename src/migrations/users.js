@@ -177,11 +177,3 @@ export async function updateUserIds() {
     console.log('No documents required updating.');
   }
 }
-
-export async function updateUsers() {
-  try {
-    await updateUserIds()
-  } catch (error) {
-    console.error('Migration failed:', error);
-  }
-}
