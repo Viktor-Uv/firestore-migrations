@@ -75,7 +75,7 @@ export async function updateCommentsUserIds() {
  * @param {object} commentData - The comment's data.
  * @param {Map} validUserDocIds - Map of valid user document IDs.
  * @param {Map} userIdToDocId - Map linking user 'id' fields to document IDs.
- * @returns {object} - { changed: boolean, newUserId: string|null }
+ * @returns {object} - { changed: boolean, newUserId: string }
  */
 function updateUserIdForComment(commentData, validUserDocIds, userIdToDocId) {
   let changed = false;
@@ -89,10 +89,7 @@ function updateUserIdForComment(commentData, validUserDocIds, userIdToDocId) {
       changed = true;
       console.log(`Comment ${commentData.id || 'unknown'}: updated userId from ${commentData.userId} to ${correctId}`);
     } else {
-      // If the userId isn't found at all, set it to null.
-      newUserId = null;
-      changed = true;
-      console.log(`Comment ${commentData.id || 'unknown'}: userId ${commentData.userId} not found, setting to null`);
+      console.log(`Comment ${commentData.id || 'unknown'}: WARNING! userId ${commentData.userId} not found. No changes applied`);
     }
   }
   return { changed, newUserId };

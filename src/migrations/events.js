@@ -86,7 +86,7 @@ export async function updateEventsCreatorAndLikedAndMembers() {
  * @param {object} eventData - The event document data.
  * @param {Map} validUserDocIds - Map of valid user document IDs.
  * @param {Map} userIdToDocId - Map linking user 'id' fields to document IDs.
- * @returns {object} - { changed: boolean, newCreatedBy: object|null }
+ * @returns {object} - { changed: boolean, newCreatedBy: string }
  */
 function updateCreatedByForEvent(eventData, validUserDocIds, userIdToDocId) {
   let changed = false;
@@ -102,10 +102,7 @@ function updateCreatedByForEvent(eventData, validUserDocIds, userIdToDocId) {
       changed = true;
       console.log(`Event ${eventData.id || 'unknown'}: updated createdBy.id from ${originalId} to ${newCreatedBy.id}`);
     } else {
-      // If not found, clear the createdBy field.
-      newCreatedBy = null;
-      changed = true;
-      console.log(`Event ${eventData.id || 'unknown'}: createdBy.id ${originalId} not found, setting createdBy to null`);
+      console.log(`Event ${eventData.id || 'unknown'}: WARNING! createdBy.id ${originalId} not found. No changes applied`);
     }
   }
   return { changed, newCreatedBy };
