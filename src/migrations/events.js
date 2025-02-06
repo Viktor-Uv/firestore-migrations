@@ -73,9 +73,9 @@ export async function updateEventsCreatorAndLikedAndMembers() {
     }
     console.log(`Committing batch update for ${updateCount} event documents...`);
     await batch.commit();
-    console.log('Batch update complete.');
+    console.log('Batch update complete.\n');
   } else {
-    console.log('No event documents required updating.');
+    console.log('No event documents required updating.\n');
   }
 }
 
