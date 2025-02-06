@@ -12,7 +12,7 @@ const host = process.env.FIRESTORE_EMULATOR_HOST || '!PRODUCTION!';
 export async function updateEventsCreatorAndLikedAndMembers() {
   // Build mappings from the users collection.
   const usersSnapshot = await usersRef.get();
-  console.log(`Found ${usersSnapshot.size} user documents for comments migration.`);
+  console.log(`Found ${usersSnapshot.size} user documents for events migration.`);
   const validUserDocIds = new Map();
   const userIdToDocId = new Map();
   usersSnapshot.forEach(doc => {
