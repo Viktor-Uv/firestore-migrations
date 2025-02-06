@@ -57,18 +57,18 @@ export async function updateClubsAdminsAndMembers() {
   });
 
   if (updateCount > 0) {
-    console.log(`\nYou are about to run the migration on: ${host}`);
+    console.log(`You are about to run the migration on: ${host}`);
     console.log(`About to update ${updateCount} clubs documents for admins/members migration.`);
     const answer = await askConfirmation('Do you want to continue? (y/n): ');
     if (answer !== 'y') {
-      console.log('Migration aborted.');
-      process.exit(0);
+      console.log('Migration aborted.\n');
+      return;
     }
     console.log(`Committing batch update for ${updateCount} clubs documents...`);
     await batch.commit();
-    console.log('Batch update complete.');
+    console.log('Batch update complete.\n');
   } else {
-    console.log('No clubs documents required updating.');
+    console.log('No clubs documents required updating.\n');
   }
 }
 

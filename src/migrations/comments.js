@@ -55,18 +55,18 @@ export async function updateCommentsUserIds() {
   });
 
   if (updateCount > 0) {
-    console.log(`\nYou are about to run the migration on: ${host}`);
+    console.log(`You are about to run the migration on: ${host}`);
     console.log(`About to update ${updateCount} comment documents for userId and likedUsers migration.`);
     const answer = await askConfirmation('Do you want to continue? (y/n): ');
     if (answer !== 'y') {
-      console.log('Migration aborted.');
-      process.exit(0);
+      console.log('Migration aborted.\n');
+      return;
     }
     console.log(`Committing batch update for ${updateCount} comment documents...`);
     await batch.commit();
-    console.log('Batch update complete.');
+    console.log('Batch update complete.\n');
   } else {
-    console.log('No comment documents required updating.');
+    console.log('No comment documents required updating.\n');
   }
 }
 

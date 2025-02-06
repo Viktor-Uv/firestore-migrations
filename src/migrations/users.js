@@ -65,18 +65,18 @@ export async function updateSubscribersAndSubscriptions() {
   });
 
   if (updateCount > 0) {
-    console.log(`\nYou are about to run the migration on: ${host}`);
+    console.log(`You are about to run the migration on: ${host}`);
     console.log(`About to update ${updateCount} documents for subscribers/subscriptions migration.`);
     const answer = await askConfirmation('Do you want to continue? (y/n): ');
     if (answer !== 'y') {
-      console.log('Migration aborted.');
-      process.exit(0);
+      console.log('Migration aborted.\n');
+      return;
     }
     console.log(`Committing batch update for ${updateCount} documents...`);
     await batch.commit();
-    console.log('Batch update complete.');
+    console.log('Batch update complete.\n');
   } else {
-    console.log('No documents required updating for subscribers/subscriptions.');
+    console.log('No documents required updating.\n');
   }
 }
 
@@ -165,17 +165,17 @@ export async function updateUserIds() {
   });
 
   if (updateCount > 0) {
-    console.log(`\nYou are about to run the migration on: ${host}`);
-    console.log(`About to update ${updateCount} documents.`);
+    console.log(`You are about to run the migration on: ${host}`);
+    console.log(`About to update ${updateCount} documents for user Id to document Id migration.`);
     const answer = await askConfirmation('Do you want to continue? (y/n): ');
     if (answer !== 'y') {
-      console.log('Migration aborted.');
+      console.log('Migration aborted.\n');
       process.exit(0);
     }
     console.log(`Committing batch update for ${updateCount} documents...`);
     await batch.commit();
-    console.log('Batch update complete.');
+    console.log('Batch update complete.\n');
   } else {
-    console.log('No documents required updating.');
+    console.log('No documents required updating.\n');
   }
 }
