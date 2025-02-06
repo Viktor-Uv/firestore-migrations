@@ -8,8 +8,7 @@
   },
   "private": true,
   "dependencies": {
-    "firebase-admin": "^13.0.2",
-    "firebase-tools": "^13.23.1"
+    "firebase-admin": "^13.0.2"
   },
   "type": "module"
 }
