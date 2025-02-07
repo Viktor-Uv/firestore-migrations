@@ -4,6 +4,7 @@ import { db } from "../shared/database.js";
 // If you're running against the emulator, ensure that the FIRESTORE_EMULATOR_HOST env var is set.
 
 const usersRef = db.collection('users');
+const sessionsRef = db.collection('sessions');
 const host = process.env.FIRESTORE_EMULATOR_HOST || '!PRODUCTION!';
 
 /**
@@ -77,6 +78,53 @@ export async function updateSubscribersAndSubscriptions() {
     console.log('Batch update complete.\n');
   } else {
     console.log('No documents required updating.\n');
+  }
+}
+
+/**
+ * Migration function to remove non-existent session IDs from users' sessions arrays.
+ */
+export async function cleanUpUserSessions() {
+  const usersSnapshot = await usersRef.get();
+  console.log(`Found ${usersSnapshot.size} user documents for user's sessions migration.`);
+
+  const sessionsSnapshot = await sessionsRef.get();
+  const validSessionIds = new Set();
+  sessionsSnapshot.forEach(doc => {
+    validSessionIds.add(doc.id);
+  });
+  console.log(`Found ${validSessionIds.size} valid session documents.`);
+
+  const batch = db.batch();
+  let updateCount = 0;
+
+  usersSnapshot.forEach(doc => {
+    const data = doc.data();
+    if (data.sessions && Array.isArray(data.sessions)) {
+      const originalSessions = data.sessions;
+      const filteredSessions = originalSessions.filter(sessionId => validSessionIds.has(sessionId));
+
+      if (filteredSessions.length !== originalSessions.length) {
+        batch.update(doc.ref, { sessions: filteredSessions });
+        updateCount++;
+        console.log(`User ${doc.id}: updated sessions list.`);
+      }
+    }
+  });
+
+  if (updateCount > 0) {
+    console.log(`You are about to run the migration on: ${host}`);
+    console.log(`You are about to update ${updateCount} user documents to clean up sessions.`);
+    const answer = await askConfirmation('Do you want to continue? (y/n): ');
+    if (answer !== 'y') {
+      console.log('Migration aborted.\n');
+      process.exit(0);
+    }
+    console.log(`Committing batch update for ${updateCount} user documents...`);
+    await batch.commit();
+    console.log('Batch update complete.\n');
+  } else {
+    console.log('No user documents required updating.\n');
   }
 }
 
