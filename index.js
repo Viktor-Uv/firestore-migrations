@@ -1,4 +1,4 @@
-import { updateUserIds, updateSubscribersAndSubscriptions, cleanUpUserSessions } from './src/migrations/users.js';
+import { updateUserIds, updateSubscribersAndSubscriptions, updateUserSessions } from './src/migrations/users.js';
 import { updateClubsAdminsAndMembers } from './src/migrations/clubs.js';
 import { updateCommentsUserIds } from './src/migrations/comments.js';
 import { updateEventsCreatorAndLikedAndMembers } from './src/migrations/events.js';
@@ -10,4 +10,4 @@ await updateCommentsUserIds();
 await updateEventsCreatorAndLikedAndMembers();
 await updateSessionsCreatorId();
 await updateUserIds();
-await cleanUpUserSessions();
+await updateUserSessions();

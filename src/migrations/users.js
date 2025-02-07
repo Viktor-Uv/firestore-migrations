@@ -1,5 +1,6 @@
 import { askConfirmation } from "../shared/console.js";
 import { db } from "../shared/database.js";
+import { FieldValue } from "firebase-admin/firestore";
 
 // If you're running against the emulator, ensure that the FIRESTORE_EMULATOR_HOST env var is set.
 
@@ -82,60 +83,61 @@ export async function updateSubscribersAndSubscriptions() {
 }
 
 /**
- * Migration function to remove non-existent session IDs from users' sessions arrays.
+ * Migration function to update users' sessions field.
+ * It removes session ids that do not exist in the sessions collection.
  */
-export async function cleanUpUserSessions() {
-  const usersSnapshot = await usersRef.get();
-  console.log(`Found ${usersSnapshot.size} user documents for user's sessions migration.`);
+export async function updateUserSessions() {
+  // First, fetch all user documents that have sessions.
+  const usersSnapshot = await usersRef.where('sessions', '!=', []).get();
+  console.log(`Found ${usersSnapshot.size} relevant user documents for sessions migration.`);
 
+  // Then, fetch all valid sessions from the sessions collection.
   const sessionsSnapshot = await sessionsRef.get();
   const validSessionIds = new Set();
   sessionsSnapshot.forEach(doc => {
     validSessionIds.add(doc.id);
   });
-  console.log(`Found ${validSessionIds.size} valid session documents.`);
+  console.log(`Found ${validSessionIds.size} valid session ids in the sessions collection.`);
 
   const batch = db.batch();
   let updateCount = 0;
+  let changesCount = 0;
 
   usersSnapshot.forEach(doc => {
-    const data = doc.data();
-    if (data.sessions && Array.isArray(data.sessions)) {
-      const originalSessions = data.sessions;
-      const filteredSessions = [];
-      let removedSessions = [];
+    const user = doc.data();
+    const userSessions = user.sessions;
+    let updatedSessions = new Set(userSessions);
+    let isChanged = false;
 
-      originalSessions.forEach(sessionId => {
-        if (validSessionIds.has(sessionId)) {
-          filteredSessions.push(sessionId);
-        } else {
-          removedSessions.push(sessionId);
-        }
-      });
-
-      if (removedSessions.length > 0) {
-        batch.update(doc.ref, { sessions: filteredSessions });
-        updateCount++;
-        removedSessions.forEach(sessionId => {
-          console.log(`User ${doc.id}: removed non-existent session ${sessionId} from sessions list.`);
-        });
+    for (let session of userSessions) {
+      if (!validSessionIds.has(session)) {
+        // Remove the session from the user's sessions array.
+        updatedSessions.delete(session);
+        isChanged = true;
+        console.log(`User ${user.id}: removed non-existent session id ${session}.`);
+        changesCount++;
       }
+    }
+
+    if (isChanged) {
+      batch.update(doc.ref, { sessions: Array.from(updatedSessions) });
+      updateCount++;
     }
   });
 
   if (updateCount > 0) {
     console.log(`You are about to run the migration on: ${host}`);
-    console.log(`You are about to update ${updateCount} user documents to clean up sessions.`);
+    console.log(`You are about to perform ${changesCount} changes in ${updateCount} user documents to clean up deleted sessions.`);
     const answer = await askConfirmation('Do you want to continue? (y/n): ');
     if (answer !== 'y') {
       console.log('Migration aborted.\n');
       process.exit(0);
     }
-    console.log(`Committing batch update for ${updateCount} user documents...`);
+    console.log(`Committing batch update for ${updateCount} user document(s)...`);
     await batch.commit();
     console.log('Batch update complete.\n');
   } else {
-    console.log('No user documents required updating.\n');
+    console.log('No user documents required updating for sessions migration.\n');
   }
 }
 
