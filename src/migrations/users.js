@@ -102,12 +102,23 @@ export async function cleanUpUserSessions() {
     const data = doc.data();
     if (data.sessions && Array.isArray(data.sessions)) {
       const originalSessions = data.sessions;
-      const filteredSessions = originalSessions.filter(sessionId => validSessionIds.has(sessionId));
+      const filteredSessions = [];
+      let removedSessions = [];
 
-      if (filteredSessions.length !== originalSessions.length) {
+      originalSessions.forEach(sessionId => {
+        if (validSessionIds.has(sessionId)) {
+          filteredSessions.push(sessionId);
+        } else {
+          removedSessions.push(sessionId);
+        }
+      });
+
+      if (removedSessions.length > 0) {
         batch.update(doc.ref, { sessions: filteredSessions });
         updateCount++;
-        console.log(`User ${doc.id}: updated sessions list.`);
+        removedSessions.forEach(sessionId => {
+          console.log(`User ${doc.id}: removed non-existent session ${sessionId} from sessions list.`);
+        });
       }
     }
   });
