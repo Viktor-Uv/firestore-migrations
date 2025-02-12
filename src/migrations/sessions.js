@@ -68,3 +68,56 @@ export async function updateSessionsCreatorId() {
     console.log('No session documents required updating.\n');
   }
 }
+
+export async function updateSessionsMentions() {
+  const sessionsRef = db.collection('sessions');
+  const sessionsSnapshot = await sessionsRef.get();
+  console.log(`Found ${sessionsSnapshot.size} session documents for mentions migration.`);
+
+  const batch = db.batch();
+  let updateCount = 0;
+
+  sessionsSnapshot.forEach(doc => {
+    const data = doc.data();
+
+    if (data.mentions && Array.isArray(data.mentions)) {
+      // Map through the mentions array and update cigar mentions.
+      const newMentions = data.mentions.map(mention => {
+        if (mention.type === 'cigar') {
+          console.log(`Session ${doc.id}: migrated cigar mention with referenceId ${mention.referenceId} to new model.`);
+          return {
+            cigarMention: {
+              referenceId: mention.referenceId,
+              name: mention.name,
+              description: mention.description
+            }
+          };
+        }
+        // Leave non-cigar mentions unchanged.
+        return mention;
+      });
+
+      // Check if any mention was updated (i.e. if any mention had type 'cigar').
+      const hasChanges = data.mentions.some(m => m.type === 'cigar');
+      if (hasChanges) {
+        batch.update(doc.ref, { mentions: newMentions });
+        updateCount++;
+      }
+    }
+  });
+
+  if (updateCount > 0) {
+    console.log(`You are about to run the migration on: ${host}`);
+    console.log(`About to update ${updateCount} session document(s) for mentions migration.`);
+    const answer = await askConfirmation('Do you want to continue? (y/n): ');
+    if (answer !== 'y') {
+      console.log('Migration aborted.\n');
+      process.exit(0);
+    }
+    console.log(`Committing batch update for ${updateCount} session document(s)...`);
+    await batch.commit();
+    console.log('Batch update complete.\n');
+  } else {
+    console.log('No session documents required updating for mentions migration.\n');
+  }
+}
