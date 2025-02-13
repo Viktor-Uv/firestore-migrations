@@ -70,7 +70,6 @@ export async function updateSessionsCreatorId() {
 }
 
 export async function updateSessionsMentions() {
-  const sessionsRef = db.collection('sessions');
   const sessionsSnapshot = await sessionsRef.get();
   console.log(`Found ${sessionsSnapshot.size} session documents for mentions migration.`);
 
