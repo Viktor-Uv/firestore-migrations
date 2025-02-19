@@ -1,8 +1,6 @@
-import { askConfirmation } from "../shared/console.js";
 import { db } from "../shared/database.js";
 
 const cigarsRef = db.collection('cigars');
-const host = process.env.FIRESTORE_EMULATOR_HOST || '!PRODUCTION!';
 
 export async function findCigarsWithFilledFieldNames() {
   const fields = ['characteristics', 'rating', 'reviewsCount'];
