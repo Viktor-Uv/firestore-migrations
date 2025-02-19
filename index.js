@@ -7,6 +7,7 @@ import {
   updateSessionsCreatorId,
   updateSessionsMentions
 } from './src/migrations/sessions.js';
+import { findCigarsWithFilledFieldNames } from "./src/migrations/cigars.js";
 
 // await updateSubscribersAndSubscriptions();
 // await updateClubsAdminsAndMembers();
@@ -16,4 +17,5 @@ import {
 // await updateUserIds();
 // await updateUserSessions();
 // await updateSessionsMentions();
-await updateCigarMentionsFillMissingFields();
+// await updateCigarMentionsFillMissingFields();
+await findCigarsWithFilledFieldNames();
